@@ -4,6 +4,7 @@ namespace api.Application.DTOs
     public class NoteDto
     {
         public Guid Id { get; set; }
+        public string? Title { get; set; }
         public Guid UserId { get; set; }
         public string? Content { get; set; }
         public string? SourceType { get; set; }
@@ -13,6 +14,7 @@ namespace api.Application.DTOs
     // For creating a new note
     public class CreateNoteDto
     {
+        public string? Title { get; set; }
         public string? Content { get; set; }
         public string? SourceType { get; set; }  // "Text", "Image", "Audio"
     }

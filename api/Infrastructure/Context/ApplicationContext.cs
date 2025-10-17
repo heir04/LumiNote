@@ -8,6 +8,7 @@ namespace api.Infrastructure.Context
         public DbSet<Quiz>? Quizzes { get; set; }
         public DbSet<QuizQuestion>? QuizQuestions { get; set; }
         public DbSet<Note>? Notes { get; set; }
+        public DbSet<Summary> Summaries { get; set; }
         public DbSet<User>? Users { get; set; }
     }
 }
