@@ -6,9 +6,8 @@ namespace api.Application.Interface
     {
         Task<BaseResponse<QuizDto>> Create(CreateQuizDto quizDto);
         Task<BaseResponse<QuizDto>> Get(Guid id);
-        Task<BaseResponse<IEnumerable<QuizSummaryDto>>> GetAllByCurrentUser();
-        Task<BaseResponse<IEnumerable<QuizQuestionDisplayDto>>> GetAllQuizQuestion(Guid quizid);
-        Task<BaseResponse<IEnumerable<QuizQuestionDto>>> GetAllQuestionsByQuizId(Guid quizId);
+        Task<BaseResponse<QuizSummaryDto>> GetQuizSummary(Guid quizId);
+        Task<BaseResponse<IEnumerable<QuizQuestionDisplayDto>>> GetAllQuizQuestion(Guid quizId);
         Task<BaseResponse<AnswerResultDto>> AnswerQuestion(Guid questionId, SubmitAnswerDto dto);
     }
 }

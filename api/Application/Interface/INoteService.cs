@@ -6,6 +6,6 @@ namespace api.Application.Interface
     {
         Task<BaseResponse<CreateNoteDto>> Create(CreateNoteDto dto);
         Task<BaseResponse<NoteDto>> Get(Guid id);
-        Task<IEnumerable<NoteDto>> GetAllByCurrentUser();
+        Task<BaseResponse<IEnumerable<NoteDto>>> GetAllByCurrentUser();
     }
 }

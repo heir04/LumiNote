@@ -4,7 +4,6 @@ namespace api.Application.DTOs
     public class QuizDto
     {
         public Guid Id { get; set; }
-        public string? Title { get; set; }
         public Guid UserId { get; set; }
         public List<QuizQuestionDto> Questions { get; set; } = [];
         public int Score { get; set; }
@@ -17,7 +16,6 @@ namespace api.Application.DTOs
     // For creating a new quiz
     public class CreateQuizDto
     {
-        public string? Title { get; set; }
         public List<CreateQuizQuestionDto> Questions { get; set; } = [];
     }
 
@@ -31,7 +29,6 @@ namespace api.Application.DTOs
     public class QuizSummaryDto
     {
         public Guid Id { get; set; }
-        public string? Title { get; set; }
         public int TotalQuestions { get; set; }
         public int AnsweredCount { get; set; }
         public int Score { get; set; }

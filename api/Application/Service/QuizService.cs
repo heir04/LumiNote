@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Application.DTOs;
 using api.Application.Interface;
+using api.Entities;
 using api.Infrastructure.Context;
 using api.Infrastructure.Security;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Application.Service
 {
@@ -13,34 +15,120 @@ namespace api.Application.Service
     {
         private readonly ApplicationContext _context = context;
         private readonly ICurrentUserService _currentUser = currentUser;
-        public Task<BaseResponse<AnswerResultDto>> AnswerQuestion(Guid questionId, SubmitAnswerDto dto)
+        public async Task<BaseResponse<AnswerResultDto>> AnswerQuestion(Guid questionId, SubmitAnswerDto dto)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse<AnswerResultDto>();
+
+            var question = await _context.QuizQuestions.FindAsync(questionId);
+            if (question == null)
+            {
+                response.Message = "Question not found.";
+                return response;
+            }
+
+            if (dto.UserAnswer.Equals(question.Answer, StringComparison.CurrentCultureIgnoreCase))
+            {
+                question.IsAnsweredCorrectly = true;
+                question.IsAnswered = true;
+                question.UserAnswer = dto.UserAnswer;
+            }
+            else
+            {
+                question.IsAnsweredCorrectly = false;
+                question.IsAnswered = true;
+                question.UserAnswer = dto.UserAnswer;
+            }
+
+            await _context.SaveChangesAsync();
+
+            response.Status = true;
+            response.Message = "Answer submitted successfully.";
+            return response;
         }
 
-        public Task<BaseResponse<QuizDto>> Create(CreateQuizDto quizDto)
+        public async Task<BaseResponse<QuizDto>> Create(CreateQuizDto quizDto)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse<QuizDto>();
+
+            var quiz = new Quiz
+            {
+                CreatedAt = DateTime.UtcNow,
+                UserId = _currentUser.GetUserId()
+            };
+
+            await _context.Quizzes.AddAsync(quiz);
+            await _context.SaveChangesAsync();
+
+            response.Status = true;
+            response.Message = "Quiz created successfully.";
+            return response;
         }
 
-        public Task<BaseResponse<QuizDto>> Get(Guid id)
+        public async Task<BaseResponse<QuizDto>> Get(Guid id)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse<QuizDto>();
+
+            var quiz = await _context.Quizzes.FindAsync(id);
+            if (quiz == null)
+            {
+                response.Message = "Quiz not found.";
+                return response;
+            }
+
+            response.Status = true;
+            response.Data = new QuizDto
+            {
+                Id = quiz.Id,
+                CreatedAt = quiz.CreatedAt
+            };
+            return response;
         }
 
-        public Task<BaseResponse<IEnumerable<QuizSummaryDto>>> GetAllByCurrentUser()
+        public async Task<BaseResponse<IEnumerable<QuizQuestionDisplayDto>>> GetAllQuizQuestion(Guid quizId)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse<IEnumerable<QuizQuestionDisplayDto>>();
+
+            var questions = await _context.QuizQuestions
+                .Where(q => q.QuizId == quizId)
+                .ToListAsync();
+
+            response.Status = true;
+            response.Data = questions.Select(q => new QuizQuestionDisplayDto
+            {
+                QuizId = q.QuizId,
+                QuestionNumber = questions.IndexOf(q) + 1,
+                QuestionText = q.QuestionText,
+                Options = q.Options,
+                IsAnswered = q.IsAnswered,
+                UserAnswer = q.UserAnswer
+            });
+            return response;
         }
 
-        public Task<BaseResponse<IEnumerable<QuizQuestionDto>>> GetAllQuestionsByQuizId(Guid quizId)
+        public async Task<BaseResponse<QuizSummaryDto>> GetQuizSummary(Guid quizId)
         {
-            throw new NotImplementedException();
-        }
+            var response = new BaseResponse<QuizSummaryDto>();
 
-        public Task<BaseResponse<IEnumerable<QuizQuestionDisplayDto>>> GetAllQuizQuestion(Guid quizid)
-        {
-            throw new NotImplementedException();
+            var quiz = await _context.Quizzes
+                .Include(q => q.Questions)
+                .FirstOrDefaultAsync(q => q.Id == quizId);
+
+            if (quiz == null)
+            {
+                response.Message = "Quiz not found.";
+                return response;
+            }
+
+            response.Status = true;
+            response.Data = new QuizSummaryDto
+            {
+                Id = quiz.Id,
+                TotalQuestions = quiz.Questions.Count,
+                AnsweredCount = quiz.Questions.Count(q => q.IsAnswered),
+                Score = quiz.Score,
+                CreatedAt = quiz.CreatedAt
+            };
+            return response;
         }
     }
 }

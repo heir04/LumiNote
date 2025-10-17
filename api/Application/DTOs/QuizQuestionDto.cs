@@ -36,8 +36,6 @@ namespace api.Application.DTOs
     // For submitting an answer to a question
     public class SubmitAnswerDto
     {
-        public Guid QuizId { get; set; }
-        public Guid QuestionIndex { get; set; }  // or QuestionId if you add it
         public string? UserAnswer { get; set; }
     }
 

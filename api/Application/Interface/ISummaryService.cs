@@ -10,6 +10,6 @@ namespace api.Application.Interface
     {
         Task<BaseResponse<CreateSummaryDto>> Create(CreateSummaryDto dto);
         Task<BaseResponse<SummaryDto>> Get(Guid id);
-        Task<IEnumerable<SummaryDto>> GetAllByCurrentUser();
+        Task<BaseResponse<IEnumerable<SummaryDto>>> GetAllByCurrentUser();
     }
 }
