@@ -8,7 +8,7 @@ namespace api.Application.Interface
 {
     public interface ISummaryService
     {
-        Task<BaseResponse<CreateSummaryDto>> Create(CreateSummaryDto dto);
+        Task<BaseResponse<SummaryDto>> Create(IFormFile file);
         Task<BaseResponse<SummaryDto>> Get(Guid id);
         Task<BaseResponse<IEnumerable<SummaryDto>>> GetAllByCurrentUser();
     }

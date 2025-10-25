@@ -12,6 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+// Register HttpClient for GeminiService
+builder.Services.AddHttpClient();
+
 builder.Services.Scan(scan => scan
     .FromAssembliesOf(typeof(IUserService), typeof(JwtService), typeof(UserService))
     .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Service")))

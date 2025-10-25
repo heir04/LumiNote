@@ -1,33 +1,40 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using api.Application.DTOs;
 using api.Application.Interface;
-using api.Entities;
 using api.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Application.Service
 {
-    public class SummaryService(ApplicationContext context, ICurrentUserService currentUser) : ISummaryService
+    public class SummaryService(ApplicationContext context, ICurrentUserService currentUser, IGeminiService geminiService) : ISummaryService
     {
         private readonly ApplicationContext _context = context;
         private readonly ICurrentUserService _currentUser = currentUser;
-        public async Task<BaseResponse<CreateSummaryDto>> Create(CreateSummaryDto dto)
+        private readonly IGeminiService _geminiService = geminiService;
+        public async Task<BaseResponse<SummaryDto>> Create(IFormFile file)
         {
-            var response = new BaseResponse<CreateSummaryDto>();
-
-            var summary = new Summary
+            var response = new BaseResponse<SummaryDto>();
+            if (file == null || file.Length == 0)
             {
-                UserId = _currentUser.GetUserId(),
-                Content = dto.Content,
-                Title = dto.Title
-            };
-
-            await _context.Summaries.AddAsync(summary);
-            await _context.SaveChangesAsync();
-            response.Data = dto;
+                response.Message = "Please upload a valid PDF file.";
+                return response;
+            }
+            try
+            {
+                var summaryEntity = await _geminiService.ProcessPdfAsync(file);
+                response.Data = new SummaryDto
+                {
+                    Id = summaryEntity.Id,
+                    Title = summaryEntity.Title,
+                    UserId = summaryEntity.UserId,
+                    Content = summaryEntity.Content,
+                    CreatedAt = summaryEntity.CreatedAt
+                };
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"Error processing PDF: {ex.Message}";
+                return response;
+            }
             response.Status = true;
             response.Message = "Summary created successfully.";
             return response;

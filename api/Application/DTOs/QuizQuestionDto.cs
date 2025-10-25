@@ -1,6 +1,6 @@
 namespace api.Application.DTOs
 {
-    // For returning quiz question data
+    // For returning quiz question data after taken quiz
     public class QuizQuestionDto
     {
         public Guid QuizId { get; set; }
@@ -17,6 +17,7 @@ namespace api.Application.DTOs
     public class QuizQuestionDisplayDto
     {
         public Guid QuizId { get; set; }
+        public Guid Id { get; set; }
         public int QuestionNumber { get; set; }  // For displaying "Question 1 of 10"
         public string? QuestionText { get; set; }
         public List<string> Options { get; set; } = [];
