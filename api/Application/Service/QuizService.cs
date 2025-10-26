@@ -93,10 +93,19 @@ namespace api.Application.Service
         //     return response;
         // }
 
-        public async Task<BaseResponse<IEnumerable<QuizQuestionDisplayDto>>> GetAllQuizQuestion(Guid quizId)
+        public async Task<BaseResponse<IEnumerable<QuizQuestionDisplayDto>>> GetAllQuizQuestion(Guid summaryId)
         {
             var response = new BaseResponse<IEnumerable<QuizQuestionDisplayDto>>();
-
+            
+            var quizId = await _context.Quizzes
+                .Where(q => q.SummaryId == summaryId && q.UserId == _currentUser.GetUserId())
+                .Select(q => q.Id)
+                .FirstOrDefaultAsync();
+            if (quizId == Guid.Empty)
+            {
+                response.Message = "Quiz not found for the specified summary.";
+                return response;
+            }
             var questions = await _context.QuizQuestions
                 .Where(q => q.QuizId == quizId)
                 .ToListAsync();

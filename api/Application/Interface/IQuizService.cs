@@ -8,7 +8,7 @@ namespace api.Application.Interface
         // Task<BaseResponse<QuizDto>> Get(Guid id);
         Task<BaseResponse<IEnumerable<QuizQuestionDto>>> GetQuizQuestions(Guid quizId); 
         Task<BaseResponse<QuizSummaryDto>> GetQuizSummary(Guid quizId);
-        Task<BaseResponse<IEnumerable<QuizQuestionDisplayDto>>> GetAllQuizQuestion(Guid quizId);
+        Task<BaseResponse<IEnumerable<QuizQuestionDisplayDto>>> GetAllQuizQuestion(Guid summaryId);
         Task<BaseResponse<AnswerResultDto>> AnswerQuestion(Guid questionId, SubmitAnswerDto dto);
     }
 }

@@ -95,7 +95,9 @@ namespace api.Infrastructure.Service
                     {
                         parts = new[]
                         {
-                            new { text = $"Summarize this document in 3–5 paragraphs:\n{documentText}" }
+                            new { text = $"Summarize the document as concise, easily scannable bullet points (5-8 bullets)." +
+                                           $" Start with a one-line title. Each bullet should be one sentence, focused on the most important facts, key concepts, and action items." +
+                                           $" Keep the whole summary as short as possible and suitable for quick reading.\nDocument:\n{documentText}" }
                         }
                     }
                 }
@@ -121,7 +123,14 @@ namespace api.Infrastructure.Service
             var requestUrl = $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={_apiKey}";
 
             var prompt = @$"
-                Generate 5 multiple choice questions based on the following text.
+                Generate multiple choice questions based on the following text.
+                Generate at least 5 questions but no more than 20 questions.
+                The exact number depends on the depth and breadth of content in the document:
+                - For short/simple documents: generate 5-8 questions
+                - For medium documents: generate 10-15 questions
+                - For comprehensive documents: generate up to 20 questions
+                
+                Each question should have 4 options and focus on important concepts, facts, or key takeaways.
                 Return output strictly in JSON format:
                 [
                 {{ ""question"": """", ""options"": ["""", """", """", """"], ""answer"": """", ""explanation"": """" }}
