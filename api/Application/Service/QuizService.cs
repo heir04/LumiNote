@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using api.Application.DTOs;
 using api.Application.Interface;
 using api.Entities;
 using api.Infrastructure.Context;
-using api.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Application.Service
